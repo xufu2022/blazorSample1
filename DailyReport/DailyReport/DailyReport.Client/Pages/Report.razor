@@ -1,0 +1,92 @@
+﻿        @page "/report"
+@using DailyReport.Application.DTOs
+        @using DailyReport.Shared.Models
+        @inject NavigationManager Navigation
+        @inject IReportService ReportService
+@using DailyReport.Web.UI.Components
+        @using Microsoft.AspNetCore.Components.QuickGrid
+<h3>Report</h3>
+
+@if (reports is null)
+        {
+	        <p><em>Loading...</em></p>
+        }
+else
+{
+	<table class="table">
+		<thead>
+		<th>Stored Procedure Name</th>
+		<th>Status</th>
+		<th>Monitor End Time</th>
+		<th></th>
+		</thead>
+		<tbody>
+		@foreach (var report in reports.Data)
+		{
+			<tr>
+					<td>@report.StoredProcedureName</td>
+				<td>@report.Status</td>
+				<td>@report.MonitorEndTime</td>
+				<td>
+					<button class="btn btn-primary" @onclick="() => EditReport(report.Id)">Edit</button>
+				<button class="btn btn-danger" @onclick="() => DeleteReport(report.Id)">Delete</button>
+					</td>
+			</tr>
+		}
+		</tbody>
+	</table>
+	<Pagination TItem="ReportDailyItem"
+	            PagItems="reports"
+	            OnPageChanged="HandlePageChange" />
+
+
+
+
+}
+<NavigationLock ConfirmExternalNavigation="false" OnBeforeInternalNavigation="OnBeforeInternalNavigation" />
+
+@code {
+
+	[Parameter]
+	[SupplyParameterFromQuery(Name = "Page")]
+	public int? Page { get; set; }
+	const int PageSize = 4;
+	private PaginatedItems<ReportDailyItem>? reports;
+
+
+	protected override async Task OnInitializedAsync()
+	{
+		var isBrowser = OperatingSystem.IsBrowser();
+		if (! isBrowser)
+		{
+		int pageIndex = Page ?? 1;
+        reports = await ReportService.GetAllAsync(new ReportFilterPaginationRequest(1, false, PageSize, pageIndex));
+		}
+
+	}
+	private async Task HandlePageChange(int pageIndex)
+	{
+		reports = await ReportService.GetAllAsync(new ReportFilterPaginationRequest(1, false, PageSize, pageIndex));
+		StateHasChanged();
+	}
+	private void EditReport(int id)
+	{
+		Navigation.NavigateTo($"/reportDetails/{id}");
+	}
+	private void DeleteReport(int id)
+	{
+		Navigation.NavigateTo($"/reportDetails/{id}");
+	}
+
+
+	private async Task OnBeforeInternalNavigation(LocationChangingContext context)
+	{
+		// var isBrowser = OperatingSystem.IsBrowser();
+		// if (isBrowser)
+		// {
+		// 	Console.WriteLine("jfi");
+		// }
+		// context.PreventNavigation();
+	}
+}
+       

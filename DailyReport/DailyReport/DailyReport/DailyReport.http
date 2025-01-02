@@ -1,0 +1,18 @@
+@DailyReport.API_HostAddress = https://localhost:7156
+
+GET {{DailyReport.API_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
+
+Post {{DailyReport.API_HostAddress}}/api/reports/list
+Content-Type: application/json
+Accept: application/json
+
+{
+  "pageIndex": 0,
+  "pageSize": 4
+}
+
+
+###

@@ -1,0 +1,24 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <Sdk Name="Aspire.AppHost.Sdk" Version="9.0.0" />
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net9.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <IsAspireHost>true</IsAspireHost>
+    <UserSecretsId>6954697e-3df0-4e4d-8008-e18c2d117923</UserSecretsId>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Aspire.Hosting.AppHost" Version="9.0.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\DailyReport.API\DailyReport.API.csproj" />
+    <ProjectReference Include="..\DailyReport.Web.UI.Samples\DailyReport.Web.UI.Samples.csproj" />
+    <ProjectReference Include="..\DailyReport\DailyReport\DailyReport.csproj" />
+  </ItemGroup>
+
+</Project>

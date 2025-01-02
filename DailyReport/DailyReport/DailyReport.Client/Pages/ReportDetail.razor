@@ -1,0 +1,110 @@
+﻿@page "/reportDetails/{Id:int?}"
+@using DailyReport.Application.DTOs
+@using DailyReport.Client.Controls
+@inject NavigationManager Navigation
+@inject IReportService ReportService
+@rendermode InteractiveServer
+
+
+
+@if (reportDailyEmailDto == null)
+{
+	<p><em>Loading...</em></p>
+}
+else
+{
+	<h3>ReportDetail -- @reportDailyEmailDto.StoredProcedureName</h3>
+	<EditForm Model="reportDailyEmailDto" OnValidSubmit="HandleValidSubmit" Enhance>
+		<ObjectGraphDataAnnotationsValidator />
+		<ValidationSummary />
+		<input type="hidden" @bind="reportDailyEmailDto.Id" />
+
+		<div class="row mb-3 align-items-center">
+			<label for="storedProcedureName" class="col-md-3 col-form-label">Stored Procedure Name:</label>
+			<div class="col-md-9">
+				<InputText id="storedProcedureName" class="form-control" @bind-Value="reportDailyEmailDto.StoredProcedureName" />
+				<ValidationMessage For="@(() => reportDailyEmailDto.StoredProcedureName)" />
+			</div>
+		</div>
+
+		<!-- Enabled -->
+		<div class="row mb-3 align-items-center">
+			<label for="enabled" class="col-md-3 col-form-label">Enabled:</label>
+			<div class="col-md-9 d-flex align-items-center">
+				<InputCheckbox id="enabled" class="form-check-input" @bind-Value="reportDailyEmailDto.Enabled" />
+			</div>
+		</div>
+
+		<!-- Last Processed DateTime -->
+		<div class="row mb-3 align-items-center">
+			<label for="lastProcessedDateTime" class="col-md-3 col-form-label">Last Processed DateTime:</label>
+			<div class="col-md-9">
+				<InputDate id="lastProcessedDateTime" class="form-control" @bind-Value="reportDailyEmailDto.LastProcessedDateTime" hidden />
+			</div>
+		</div>
+
+		<!-- Email Content Section -->
+		<div class="row mt-4">
+			<h5>Email Content</h5>
+			<div class="col-md-12">
+                <!-- Email Content Section -->
+                <div class="row mt-4">
+                    <h5>Email Content</h5>
+                    <div class="col-md-12">
+                        <EmailContentEdit @bind-Value="reportDailyEmailDto.EmailContent" />
+                    </div>
+                </div>
+			</div>
+		</div>
+
+		<!-- Report Schedule Section -->
+		<div class="row mt-4">
+			<h5>Report Schedule</h5>
+			<div class="col-md-12">
+				<ReportScheduleEdit @bind-Value="reportDailyEmailDto.ReportSchedule" />
+			</div>
+		</div>
+
+		<!-- Save Button -->
+		<div class="row mt-4">
+			<div class="col-md-12 text-end">
+				<button type="submit" class="btn btn-primary">Save</button>
+			</div>
+		</div>
+	</EditForm>
+}
+
+
+@code {
+	[Parameter]
+	[SupplyParameterFromQuery]
+	public int? Id { get; set; }
+
+	private ReportDailyEmailDto reportDailyEmailDto;
+
+	protected override async Task OnInitializedAsync()
+	{
+		if (Id.HasValue)
+		{
+				reportDailyEmailDto = await ReportService.GetAsync(Id.Value);
+				Console.WriteLine(reportDailyEmailDto);
+		}
+		else
+		{
+			reportDailyEmailDto = new ReportDailyEmailDto
+			{
+				EmailContent = new () ,
+				ReportSchedule = new ()
+			};
+		}
+
+
+	}
+
+	private void HandleValidSubmit()
+	{
+		Console.WriteLine(reportDailyEmailDto);
+		// Handle the save logic here, e.g., call an API or service.
+	}
+
+}

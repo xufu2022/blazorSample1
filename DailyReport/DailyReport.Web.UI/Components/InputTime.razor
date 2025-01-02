@@ -1,0 +1,33 @@
+﻿@inherits Microsoft.AspNetCore.Components.Forms.InputBase<TimeSpan>
+
+<input type="time" class="form-control @CssClass"
+       value="@CurrentValueAsString"
+       @oninput="HandleInput" />
+@code {
+	
+	[Parameter] public string? CssClass { get; set; } // Optional CSS class for customization
+
+	protected override string? FormatValueAsString(TimeSpan value)
+	{
+		return value.ToString(@"hh\:mm");
+	}
+
+	// Parses the input string back into a TimeSpan
+	protected override bool TryParseValueFromString(string? value, out TimeSpan result, out string? validationErrorMessage)
+	{
+		if (TimeSpan.TryParse(value, out result))
+		{
+			validationErrorMessage = null;
+			return true;
+		}
+
+		validationErrorMessage = "Invalid time format. Please use HH:mm.";
+		return false;
+	}
+
+	private void HandleInput(ChangeEventArgs e)
+	{
+		// Capture input changes and update the value
+		CurrentValueAsString = e.Value?.ToString();
+	}
+}

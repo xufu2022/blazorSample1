@@ -1,0 +1,68 @@
+﻿@using System.Diagnostics.CodeAnalysis
+@using DailyReport.Shared.Enums
+@inherits Microsoft.AspNetCore.Components.Forms.InputBase<Weekdays>
+
+<div class="checkbox-group d-flex flex-row">
+    @foreach (var day in Enum.GetValues<Weekdays>())
+    {
+        if (day == Weekdays.None) continue;
+
+        <div class="form-check me-3">
+            <input type="checkbox"
+                   class="form-check-input"
+                   id="@day.ToString()"
+                   @onchange="(e) => ToggleDay(day, ((ChangeEventArgs)e).Value as bool?)"
+                   checked="@CurrentValue.HasFlag(day)" />
+            <label class="form-check-label" for="@day.ToString()">@day</label>
+        </div>
+    }
+</div>
+
+@code {
+    // Toggle the selection of a day
+    private void ToggleDay(Weekdays day, bool? isSelected)
+    {
+        if (isSelected == true)
+        {
+            CurrentValue |= day; // Add the day
+        }
+        else
+        {
+            CurrentValue &= ~day; // Remove the day
+        }
+
+        // Notify Blazor of the change
+        ValueChanged.InvokeAsync(CurrentValue);
+    }
+
+    // Parse the value from a string
+    protected override bool TryParseValueFromString(string? value, out Weekdays result, [NotNullWhen(false)] out string? validationErrorMessage)
+    {
+        if (string.IsNullOrWhiteSpace(value))
+        {
+            result = Weekdays.None;
+            validationErrorMessage = null;
+            return true;
+        }
+
+        try
+        {
+            // Split the input string into individual weekday names
+            var names = value.Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
+
+            // Parse each name into the Weekdays enum and combine them
+            result = names
+                .Select(name => Enum.TryParse<Weekdays>(name, true, out var day) ? day : Weekdays.None)
+                .Aggregate(Weekdays.None, (current, day) => current | day);
+
+            validationErrorMessage = null;
+            return true;
+        }
+        catch
+        {
+            result = Weekdays.None;
+            validationErrorMessage = "Invalid weekdays format. Please use a comma-separated list of valid weekday names.";
+            return false;
+        }
+    }
+}

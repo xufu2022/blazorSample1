@@ -1,0 +1,40 @@
+﻿@inherits Editor<EmailContentDto>
+
+<!-- Email Addresses -->
+<div class="row mb-3 align-items-center">
+	<label for="emailAddresses" class="col-md-3 col-form-label">Email Addresses:</label>
+	<div class="col-md-9">
+		<InputText id="emailAddresses" class="form-control" @bind-Value="@Value.EmailAddresses" />
+	</div>
+</div>
+
+<!-- Subject -->
+<div class="row mb-3 align-items-center">
+	<label for="subject" class="col-md-3 col-form-label">Subject:</label>
+	<div class="col-md-9">
+		<InputText id="subject" class="form-control" @bind-Value="@Value.Subject" />
+		<ValidationMessage For="@(() => Value.Subject)" />
+	</div>
+</div>
+
+<!-- Body -->
+<div class="row mb-3 align-items-center">
+	<label for="body" class="col-md-3 col-form-label">Body:</label>
+	<div class="col-md-9">
+		<InputText id="body" class="form-control" rows="4" @bind-Value="@Value.Body" />
+		<ValidationMessage For="@(() => Value.Body)" />
+	</div>
+</div>
+
+<!-- Attachment Name -->
+<div class="row mb-3 align-items-center">
+	<label for="attachmentName" class="col-md-3 col-form-label">Attachment Name:</label>
+	<div class="col-md-9">
+		<InputText id="attachmentName" class="form-control" @bind-Value="@Value.AttachmentName" />
+		<ValidationMessage For="@(() => Value.AttachmentName)" />
+	</div>
+</div>
+
+@code {
+
+}

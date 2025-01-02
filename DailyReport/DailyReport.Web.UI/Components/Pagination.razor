@@ -1,0 +1,47 @@
+﻿@using DailyReport.Shared.Models
+@typeparam TItem
+
+<div class="d-flex justify-content-center justify-content-sm-between align-items-center text-center flex-wrap gap-2 showing-wrap mt-4">
+	<span class="fs-12 fw-medium">
+		Showing @(PagItems.PageSize) of @(PagItems.Count) Results
+	</span>
+
+	<nav aria-label="Page navigation example">
+		<ul class="pagination mb-0 justify-content-center">
+			<li class="page-item @(PagItems.HasPrev ? "" : "disabled")">
+				<button class="page-link icon" @onclick="() => OnNavigate(PagItems.PageIndex - 1)" aria-label="Previous" disabled="@(PagItems.PageIndex == 1)">
+					<i class="material-symbols-outlined">Previous</i>
+				</button>
+			</li>
+			@for (int i = 1; i <= PagItems.TotalPages; i++)
+			{
+				var pagei = i;
+				<li class="page-item @(PagItems.PageIndex == pagei ? "active" : "")">
+					<button class="page-link" @onclick="() => OnNavigate(pagei)">@pagei</button>
+				</li>
+			}
+			<li class="page-item @(PagItems.HasNext ? "" : "disabled")">
+				<button class="page-link icon" @onclick="() => OnNavigate(PagItems.PageIndex + 1)" aria-label="Next" disabled="@(PagItems.PageIndex == PagItems.TotalPages)">
+					<i class="material-symbols-outlined">Next</i>
+				</button>
+			</li>
+		</ul>
+	</nav>
+</div>
+
+
+@code {
+	[Parameter]
+	public PaginatedItems<TItem> PagItems { get; set; }
+
+	[Parameter]
+	public EventCallback<int> OnPageChanged { get; set; }
+
+	private void OnNavigate(int pageIndex)
+	{
+		if (pageIndex >= 1 && pageIndex <= PagItems.TotalPages)
+		{
+			OnPageChanged.InvokeAsync(pageIndex);
+		}
+	}
+}

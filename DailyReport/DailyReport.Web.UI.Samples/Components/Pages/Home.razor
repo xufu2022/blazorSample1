@@ -1,0 +1,140 @@
+﻿@page "/"
+@using DailyReport.Shared.Models
+@using DailyReport.Web.UI.Components
+@rendermode InteractiveServer
+<PageTitle>Home</PageTitle>
+
+<h1>Hello, world!</h1>
+
+Welcome to your new app.
+
+<div class="default-table-area style-two patient-table">
+    <div class="table-responsive">
+        <table class="table align-middle border-0">
+            <thead>
+                <tr class="border-bottom">
+                    <th scope="col" class="bg-transparent">Patient Name</th>
+                    <th scope="col" class="text-end bg-transparent">Date</th>
+                    <th scope="col" class="text-end bg-transparent">Time</th>
+                    <th scope="col" class="bg-transparent">Assigned</th>
+                    <th scope="col" class="text-end bg-transparent">Department</th>
+                    <th scope="col" class="text-end bg-transparent">Status</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td class="fw-medium">John Doe</td>
+                    <td class="text-end fw-medium text-body">Sept 12, 2024</td>
+                    <td class="text-end fw-medium text-body">10:30 AM</td>
+                    <td class="fw-medium">
+                        <div class="d-flex align-items-center">
+                            <img src="images/user-71.png" class="rounded-circle"
+                                 style="width: 34px; height: 34px;" alt="user">
+                            <span class="ps-2 fw-medium">Dr. Sarah</span>
+                        </div>
+                    </td>
+                    <td class="text-end fw-medium text-body">Cardiology</td>
+                    <td class="text-end">
+                        <span class="d-inline-block py-1 px-2 bg-success bg-opacity-10 rounded-2 text-success">Confirmed</span>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="fw-medium">Jane Smith</td>
+                    <td class="text-end fw-medium text-body">Sep 11, 2024 </td>
+                    <td class="text-end fw-medium text-body">11:00 AM</td>
+                    <td class="fw-medium">
+                        <div class="d-flex align-items-center">
+                            <img src="images/user-72.png" class="rounded-circle"
+                                 style="width: 34px; height: 34px;" alt="user">
+                            <span class="ps-2 fw-medium">Dr. Mark</span>
+                        </div>
+                    </td>
+                    <td class="text-end fw-medium text-body">Pediatrics</td>
+                    <td class="text-end">
+                        <span class="d-inline-block py-1 px-2 bg-danger-div bg-opacity-10 rounded-2 text-danger">Rescheduled</span>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="fw-medium">Robert Clark</td>
+                    <td class="text-end fw-medium text-body">Sep 10, 2024</td>
+                    <td class="text-end fw-medium text-body">1:00 PM</td>
+                    <td class="fw-medium">
+                        <div class="d-flex align-items-center">
+                            <img src="images/user-73.png" class="rounded-circle"
+                                 style="width: 34px; height: 34px;" alt="user">
+                            <span class="ps-2 fw-medium">Dr. Emily</span>
+                        </div>
+                    </td>
+                    <td class="text-end fw-medium text-body">Orthopedics</td>
+                    <td class="text-end">
+                        <span class="d-inline-block py-1 px-2 bg-danger bg-opacity-10 rounded-2 text-danger">Cancelled</span>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="fw-medium">Linda Green</td>
+                    <td class="text-end fw-medium text-body">Sep 09, 2024</td>
+                    <td class="text-end fw-medium text-body">9:30 AM</td>
+                    <td class="fw-medium">
+                        <div class="d-flex align-items-center">
+                            <img src="images/user-74.png" class="rounded-circle"
+                                 style="width: 34px; height: 34px;" alt="user">
+                            <span class="ps-2 fw-medium">Dr. Adam</span>
+                        </div>
+                    </td>
+                    <td class="text-end fw-medium text-body">Dermatology</td>
+                    <td class="text-end">
+                        <span class="d-inline-block py-1 px-2 bg-success bg-opacity-10 rounded-2 text-success">Confirmed</span>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="fw-medium">Michael White</td>
+                    <td class="text-end fw-medium text-body">Sep 08, 2024</td>
+                    <td class="text-end fw-medium text-body">2:00 PM</td>
+                    <td class="fw-medium">
+                        <div class="d-flex align-items-center">
+                            <img src="images/user-75.png" class="rounded-circle"
+                                 style="width: 34px; height: 34px;" alt="user">
+                            <span class="ps-2 fw-medium">Dr. Rebecca</span>
+                        </div>
+                    </td>
+                    <td class="text-end fw-medium text-body">Surgery</td>
+                    <td class="text-end">
+                        <span class="d-inline-block py-1 px-2 bg-primary-div bg-opacity-10 rounded-2 text-primary-div">Pending</span>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <Pagination TItem="string"
+                PagItems="reports"
+                OnPageChanged="HandlePageChange" />
+
+</div>
+
+@code
+{
+    const int pageSize = 4;
+    private PaginatedItems<string>? reports;
+    private List<string> allReports = new List<string>
+    {
+        "Report 1", "Report 2", "Report 3", "Report 4",
+        "Report 5", "Report 6", "Report 7", "Report 8",
+        "Report 9", "Report 10", "Report 11", "Report 12",
+        "Report 13", "Report 14", "Report 15", "Report 16",
+        "Report 17", "Report 18", "Report 19", "Report 20",
+    };
+
+    protected override void OnInitialized()
+    {
+        reports = new PaginatedItems<string>(1,  allReports.Count,pageSize, allReports.Take(pageSize).ToList());
+        base.OnInitialized();
+    }
+
+    private void HandlePageChange(int pageIndex)
+    {
+        var paginatedReports = allReports.Skip((pageIndex - 1) * pageSize).Take(pageSize).ToList();
+        reports = new PaginatedItems<string>(pageIndex,  allReports.Count,pageSize, paginatedReports);
+        StateHasChanged();
+    }
+}

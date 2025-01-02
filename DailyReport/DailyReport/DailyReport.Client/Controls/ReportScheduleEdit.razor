@@ -1,0 +1,121 @@
+﻿@using DailyReport.Shared.Enums
+@using DailyReport.Web.UI.Components
+@inherits Editor<ReportScheduleDto>
+<div class="row mb-3 align-items-center">
+    <label for="freqType" class="col-md-3 col-form-label">Frequency Type:</label>
+    <div class="col-md-9">
+		<select id="freqType" class="form-control" @bind="Value.FreqType">
+            @foreach (FreqType freq in Enum.GetValues<FreqType>())
+            {
+                <option value="@(Convert.ToInt32(freq))">@freq</option>
+            }
+        </select>
+    </div>
+</div>
+@if ((FreqType)Value.FreqType == FreqType.Weekly)
+{
+	<div class="row mb-3 align-items-center">
+		<label for="FreqInterval" class="col-md-3 col-form-label">Frequency Interval:</label>
+		<div class="col-md-9">
+			<WeekdaySelector @bind-Value="Value.FreqInterval"/>
+		</div>
+	</div>
+}
+
+<div class="row mb-3 align-items-center">
+    <label for="freqSubdayType" class="col-md-3 col-form-label">Frequency SubDay Type:</label>
+	<div class="col-md-9">
+        <select id="freqSubdayType" class="form-control" @bind="Value.FreqSubdayType">
+            @foreach (FreqSubdayType subdayType in Enum.GetValues<FreqSubdayType>())
+			{
+                <option value="@(Convert.ToInt32(subdayType))">@subdayType</option>
+			}
+		</select>
+	</div>
+</div>
+
+
+@if ((FreqSubdayType)Value.FreqSubdayType == FreqSubdayType.Hours)
+{
+	<div class="row mb-3 align-items-center">
+		<label for="freqSubdayInterval" class="col-md-3 col-form-label">Frequency Subday Interval (Hours):</label>
+		<div class="col-md-9">
+			<InputNumber id="freqSubdayInterval" class="form-control" @bind-Value="Value.FreqSubdayInterval"/>
+		</div>
+	</div>
+}
+
+<div class="row mb-3 align-items-center">
+    <label for="activeStartDate" class="col-md-3 col-form-label">Active Start Date:</label>
+    <div class="col-md-9">
+        <InputDate id="activeStartDate" class="form-control" @bind-Value="Value.ActiveStartDate" />
+    </div>
+</div>
+
+
+<div class="row mb-3 align-items-center">
+    <label for="activeEndDate" class="col-md-3 col-form-label">Active End Date:</label>
+    <div class="col-md-9">
+        <InputDate id="activeEndDate" class="form-control" @bind-Value="Value.ActiveEndDate" />
+    </div>
+</div>
+
+<div class="row mb-3 align-items-center">
+    <label for="activeStartTime" class="col-md-3 col-form-label">Active Start Time:</label>
+    <div class="col-md-9">
+        <InputTime id="activeStartTime" class="form-control" @bind-Value="Value.ActiveStartTime" />
+    </div>
+</div>
+@if ((FreqSubdayType)Value.FreqSubdayType == FreqSubdayType.Hours)
+{
+	<div class="row mb-3 align-items-center">
+		<label for="activeEndTime" class="col-md-3 col-form-label">Active End Time:</label>
+		<div class="col-md-9">
+			<InputTime id="activeEndTime" class="form-control" @bind-Value="Value.ActiveEndTime"/>
+		</div>
+	</div>
+}
+
+<!-- Description Section -->
+<div class="row mt-4">
+	<label class="col-md-3 col-form-label">Schedule Description:</label>
+	<div class="col-md-9">
+		<p>@GenerateDescription()</p>
+	</div>
+</div>
+
+@code {
+	private string GenerateDescription()
+	{
+		// Frequency type description
+		string description = Value.FreqType switch
+		{
+			(int)FreqType.Daily => "Occurs daily.",
+			(int)FreqType.Weekly => $"Occurs weekly on {Value.FreqInterval}.",
+			(int)FreqType.Monthly => $"Occurs monthly.",
+			_ => "Invalid frequency type."
+		};
+
+		// Subday type and interval
+		if ((FreqSubdayType)Value.FreqSubdayType == FreqSubdayType.Hours)
+		{
+			description += $" Occurs every {Value.FreqSubdayInterval} hour(s)";
+		}
+
+		// Add time range
+		description += $" between {Value.ActiveStartTime.ToString(@"hh\:mm")} and {Value.ActiveEndTime.ToString(@"hh\:mm")}.";
+
+		// Add start and end dates
+		description += $" Schedule starts on {Value.ActiveStartDate:yyyy-MM-dd} and";
+		if (Value.ActiveEndDate != null)
+		{
+			description += $" ends on {Value.ActiveEndDate:yyyy-MM-dd}.";
+		}
+		else
+		{
+			description += $" has no end date.";
+		}
+
+		return description;
+	}
+}
